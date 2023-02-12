@@ -31,6 +31,7 @@ const authReducer = createSlice({
   extraReducers: {
     //registration
     [registration.fulfilled.type]: (state, { payload }) => {
+        console.log(payload)
       state.url = payload.url;
       state.error = "";
       state.msg = payload.msg
@@ -40,10 +41,13 @@ const authReducer = createSlice({
       state.isPending = true;
     },
     [registration.rejected.type]: (state, { payload }) => {
-      state.error = payload.msg;
+        console.log(payload)
+      state.error = payload?.msg || 'error';
       state.isPending = false;
     },
   },
 });
 
-export default authReducer
+const { reducer } = authReducer;
+
+export default reducer

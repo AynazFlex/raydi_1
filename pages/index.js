@@ -5,10 +5,8 @@ import { registration } from "../store/authReducer";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const data = useSelector((state) => state.auth);
+  const { url, error, msg, isPending } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
-  console.log(data)
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,10 +29,10 @@ export default function Home() {
               placeholder="password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            <input type="submit" value="register" />
+            <input type="submit" value={isPending ? 'loading' : 'register'} />
           </form>
-		  {/* {url.length > 0 && <div>{url}</div>}
-		  {error.length > 0 && <div>{error}</div>} */}
+		  {url.length > 0 && <div>{url}</div>}
+		  {error.length > 0 && <div>{error}</div>}
         </div>
       </div>
     </>
