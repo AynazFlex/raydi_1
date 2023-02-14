@@ -18,6 +18,7 @@ const initialState = {
   error: "",
   msg: "",
   isPending: false,
+  success: false,
 };
 
 const authReducer = createSlice({
@@ -31,13 +32,16 @@ const authReducer = createSlice({
       state.error = "";
       state.msg = payload.msg;
       state.isPending = false;
+      state.success = payload.success;
     },
     [registration.pending.type]: (state) => {
       state.error = "";
       state.isPending = true;
+      state.success = false;
+      state.msg = "";
+      state.url = ""
     },
     [registration.rejected.type]: (state, {payload}) => {
-      console.log(payload);
       state.error = payload;
       state.isPending = false;
     },

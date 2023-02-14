@@ -43,10 +43,18 @@
             font-size: 16px;
         }
 
+        .msg_error,
         .msg {
             margin-top: 10px;
-            color: red;
             text-align: center;
+        }
+
+        .msg_error {
+            color: red;
+        }
+
+        .msg {
+            color: green;
         }
     }
 }

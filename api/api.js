@@ -2,6 +2,9 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: "https://flowsmm.net/api/",
+  headers:{
+    "Content-Type": 'multipart/form-data'
+  }
 });
 
 const API = {

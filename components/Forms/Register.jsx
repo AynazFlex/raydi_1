@@ -11,7 +11,7 @@ export default function Register() {
   } = useForm({
     mode: "onChange",
   });
-  const { error, isPending } = useSelector((state) => state.auth);
+  const { msg, error, isPending } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const onSubmit = (data) => dispatch(registration(data))
@@ -44,8 +44,9 @@ export default function Register() {
         <div className={form.error}>
           {errors.password && "введите пароль"}
         </div>
-        <input disabled={isPending} type="submit" />
-        <div className={form.msg}>{error}</div>
+        <input disabled={isPending || msg.length > 0} type="submit" />
+        <div className={form.msg_error}>{error}</div>
+        <div className={form.msg}>{msg}</div>
       </form>
     </div>
   );
