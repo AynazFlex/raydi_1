@@ -1,0 +1,52 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+
+    form {
+        width: 400px;
+        padding: 40px;
+        border-radius: 40px;
+        background-color: rgba(233, 233, 233, 0.993);
+        font-size: 20px;
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            font-size: 20px;
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            border: none;
+            border-bottom: 1px solid black;
+            outline: none;
+        }
+
+        input:placeholder {
+            font-size: inherit
+        }
+
+        input[type="submit"] {
+            background-color: rgb(4, 201, 4);
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .msg {
+            margin-top: 10px;
+            color: red;
+            text-align: center;
+        }
+    }
+}

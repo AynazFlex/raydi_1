@@ -8,20 +8,16 @@ export const registration = createAsyncThunk(
       const result = await API.registration(data);
       return result;
     } catch (error) {
-      if (response?.status === 400)
-        return thunkAPI.rejectWithValue(`${response?.data.detail}`);
-      if (response?.status === 422)
-        return thunkAPI.rejectWithValue("Validation error");
-      return thunkAPI.rejectWithValue(`error status ${response?.status}`);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
 const initialState = {
-    url: '',
-    error: "",
-    msg: "",
-    isPending: false,
+  url: "",
+  error: "",
+  msg: "",
+  isPending: false,
 };
 
 const authReducer = createSlice({
@@ -31,18 +27,18 @@ const authReducer = createSlice({
   extraReducers: {
     //registration
     [registration.fulfilled.type]: (state, { payload }) => {
-        console.log(payload)
       state.url = payload.url;
       state.error = "";
-      state.msg = payload.msg
+      state.msg = payload.msg;
       state.isPending = false;
     },
     [registration.pending.type]: (state) => {
+      state.error = "";
       state.isPending = true;
     },
-    [registration.rejected.type]: (state, { payload }) => {
-        console.log(payload)
-      state.error = payload?.msg || 'error';
+    [registration.rejected.type]: (state, {payload}) => {
+      console.log(payload);
+      state.error = payload;
       state.isPending = false;
     },
   },
@@ -50,4 +46,4 @@ const authReducer = createSlice({
 
 const { reducer } = authReducer;
 
-export default reducer
+export default reducer;
