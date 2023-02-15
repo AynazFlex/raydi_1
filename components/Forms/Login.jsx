@@ -1,12 +1,12 @@
 import form from "./form.module.scss";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { registration } from "../../store/authReducer";
+import { login } from "../../store/authReducer";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { reset } from "../../store/authReducer";
 
-export default function Register() {
+export default function Login() {
   const {
     register,
     handleSubmit,
@@ -23,12 +23,12 @@ export default function Register() {
     return () => dispatch(reset())
   }, [success]);
 
-  const onSubmit = (data) => dispatch(registration(data));
+  const onSubmit = (data) => dispatch(login(data));
 
   return (
     <div className={form.wrapper}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className={form.title}>Register</div>
+        <div className={form.title}>Login</div>
         <label>
           Email
           <input
@@ -52,7 +52,7 @@ export default function Register() {
           />
         </label>
         <div className={form.error}>{errors.password && "введите пароль"}</div>
-        <input value="register" disabled={isPending || msg.length > 0} type="submit" />
+        <input value="login" disabled={isPending || msg.length > 0} type="submit" />
         <div className={form.msg_error}>{error}</div>
         <div className={form.msg}>{msg}</div>
       </form>
