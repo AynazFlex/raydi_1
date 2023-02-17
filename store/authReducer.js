@@ -1,33 +1,55 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API from "../api/api";
 
-export const registration = createAsyncThunk(
-  "auth/registration",
-  async (data, thunkAPI) => {
-    try {
-      const result = await API.registration(data);
-      return result;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const login = createAsyncThunk("auth/login", async (data, thunkAPI) => {
+const thunkFun = (fun) => async (data, thunkAPI) => {
   try {
-    const result = await API.login(data);
+    const result = await fun(data);
     return result;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message);
   }
-});
+};
+
+export const registration = createAsyncThunk(
+  "auth/registration",
+  thunkFun(API.registration)
+);
+
+export const login = createAsyncThunk("auth/login", thunkFun(API.login));
+
+export const recovery = createAsyncThunk(
+  "auth/recovery",
+  thunkFun(API.recovery)
+);
 
 const initialState = {
+  sign: "",
   url: "",
   error: "",
   msg: "",
   isPending: false,
   success: false,
+};
+
+const fulfilled = (state, { payload }) => {
+  state.url = payload.url;
+  state.error = "";
+  state.msg = payload.msg;
+  state.isPending = false;
+  state.success = payload.success;
+};
+
+const pending = (state) => {
+  state.error = "";
+  state.isPending = true;
+  state.success = false;
+  state.msg = "";
+  state.url = "";
+};
+
+const rejected = (state, { payload }) => {
+  state.error = payload;
+  state.isPending = false;
 };
 
 const authReducer = createSlice({
@@ -44,43 +66,28 @@ const authReducer = createSlice({
   },
   extraReducers: {
     //registration
-    [registration.fulfilled.type]: (state, { payload }) => {
-      state.url = payload.url;
-      state.error = "";
-      state.msg = payload.msg;
-      state.isPending = false;
-      state.success = payload.success;
-    },
-    [registration.pending.type]: (state) => {
-      state.error = "";
-      state.isPending = true;
-      state.success = false;
-      state.msg = "";
-      state.url = "";
-    },
-    [registration.rejected.type]: (state, { payload }) => {
-      state.error = payload;
-      state.isPending = false;
-    },
+    [registration.fulfilled.type]: fulfilled,
+    [registration.pending.type]: pending,
+    [registration.rejected.type]: rejected,
     //login
-    [login.fulfilled.type]: (state, { payload }) => {
-      state.url = payload.url;
+    [login.fulfilled.type]: fulfilled,
+    [login.pending.type]: pending,
+    [login.rejected.type]: rejected,
+    //recovery
+    [recovery.fulfilled.type]: (state, { payload }) => {
+      state.sign = payload.sign;
       state.error = "";
       state.msg = payload.msg;
       state.isPending = false;
       state.success = payload.success;
     },
-    [login.pending.type]: (state) => {
+    [recovery.pending.type]: (state) => {
       state.error = "";
       state.isPending = true;
       state.success = false;
       state.msg = "";
-      state.url = "";
     },
-    [login.rejected.type]: (state, { payload }) => {
-      state.error = payload;
-      state.isPending = false;
-    },
+    [recovery.rejected.type]: rejected,
   },
 });
 

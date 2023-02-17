@@ -5,26 +5,27 @@ const instance = axios.create({
   headers: {
     "Content-Type": "multipart/form-data",
   },
+  withCredentials: true,
 });
 
-const API = {
-  async registration({ email, password }) {
-    const { data } = await instance.post("auth/register", {
-      email,
-      password,
-    });
+class API {
+  static async ajaxFun(body, url) {
+    const { data } = await instance.post(`auth/${url}`, body);
     if (!data.success) throw new Error(data.msg);
     return data;
-  },
+  }
+
+  async registration({ email, password }) {
+    return await API.ajaxFun({ email, password }, "register");
+  }
 
   async login({ email, password }) {
-    const { data } = await instance.post("auth/login", {
-      email,
-      password,
-    });
-    if (!data.success) throw new Error(data.msg);
-    return data;
-  },
-};
+    return await API.ajaxFun({ email, password }, "login");
+  }
 
-export default API;
+  async recovery({ email }) {
+    return await API.ajaxFun({ email }, "recovery");
+  }
+}
+
+export default new API();
