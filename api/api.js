@@ -26,6 +26,10 @@ class API {
   async recovery({ email }) {
     return await API.ajaxFun({ email }, "recovery");
   }
+
+  async reset(body) {
+    return await API.ajaxFun(body, "password-reset")
+  }
 }
 
 export default new API();

@@ -22,6 +22,11 @@ export const recovery = createAsyncThunk(
   thunkFun(API.recovery)
 );
 
+export const resetPassword = createAsyncThunk(
+  "auth/password-reset",
+  thunkFun(API.reset)
+);
+
 const initialState = {
   sign: "",
   url: "",
@@ -87,7 +92,25 @@ const authReducer = createSlice({
       state.success = false;
       state.msg = "";
     },
-    [recovery.rejected.type]: rejected,
+    [recovery.rejected.type]: (state, { payload }) => {
+      state.error = payload;
+      state.isPending = false;
+      state.sign = "";
+    },
+    //reset-password
+    [resetPassword.fulfilled.type]: (state, { payload }) => {
+      state.error = "";
+      state.msg = payload.msg;
+      state.isPending = false;
+      state.success = payload.success;
+    },
+    [resetPassword.pending.type]: (state) => {
+      state.error = "";
+      state.isPending = true;
+      state.success = false;
+      state.msg = "";
+    },
+    [resetPassword.rejected.type]: rejected,
   },
 });
 

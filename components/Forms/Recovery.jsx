@@ -2,8 +2,8 @@ import form from "./form.module.scss";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { reset } from "../../store/authReducer";
-import { recovery } from "../../store/authReducer";
+import { reset, recovery } from "../../store/authReducer";
+import Link from "next/link";
 
 export default function Recovery() {
   const {
@@ -13,7 +13,7 @@ export default function Recovery() {
   } = useForm({
     mode: "onChange",
   });
-  const { msg, error, isPending } = useSelector((state) => state.auth);
+  const { sign, msg, error, isPending } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -43,6 +43,7 @@ export default function Recovery() {
         <input value="recovery" disabled={isPending} type="submit" />
         <div className={form.msg_error}>{error}</div>
         <div className={form.msg}>{msg}</div>
+        {sign.length > 0 && <Link className={form.recovery} href="/reset">Поменять пароль</Link>}
       </form>
     </div>
   );
