@@ -2,7 +2,7 @@ import form from "./form.module.scss";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { reset, recovery } from "../../store/authReducer";
+import { reset, recovery } from "../../store/apiReducer";
 import Link from "next/link";
 
 export default function Recovery() {
@@ -13,7 +13,7 @@ export default function Recovery() {
   } = useForm({
     mode: "onChange",
   });
-  const { sign, msg, error, isPending } = useSelector((state) => state.auth);
+  const { sign, msg, error, isPending } = useSelector((state) => state.api);
   const dispatch = useDispatch();
 
   useEffect(() => {

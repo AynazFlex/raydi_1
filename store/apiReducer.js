@@ -27,6 +27,11 @@ export const resetPassword = createAsyncThunk(
   thunkFun(API.reset)
 );
 
+export const updatePassword = createAsyncThunk(
+  "settings/update",
+  thunkFun(API.update)
+)
+
 const initialState = {
   sign: "",
   url: "",
@@ -57,8 +62,8 @@ const rejected = (state, { payload }) => {
   state.isPending = false;
 };
 
-const authReducer = createSlice({
-  name: "auth",
+const apiReducer = createSlice({
+  name: "api",
   initialState,
   reducers: {
     reset(state) {
@@ -111,10 +116,24 @@ const authReducer = createSlice({
       state.msg = "";
     },
     [resetPassword.rejected.type]: rejected,
+    //update-password
+    [updatePassword.fulfilled.type]: (state, { payload }) => {
+      state.error = "";
+      state.msg = payload.msg;
+      state.isPending = false;
+      state.success = payload.success;
+    },
+    [updatePassword.pending.type]: (state) => {
+      state.error = "";
+      state.isPending = true;
+      state.success = false;
+      state.msg = "";
+    },
+    [updatePassword.rejected.type]: rejected,
   },
 });
 
-const { reducer, actions } = authReducer;
+const { reducer, actions } = apiReducer;
 
 export const { reset } = actions;
 

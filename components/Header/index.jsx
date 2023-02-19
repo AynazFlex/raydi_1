@@ -18,6 +18,7 @@ const Header = () => {
             <Link href="/cabinet">кабинет</Link>
             <Link href="/reset">reset</Link>
             <Link href="/recovery">recovery</Link>
+            <Link href="/settings">settings</Link>
           </nav>
         </div>
         <div className="container__elem container__elem--4 container__elem--df container__elem--aic container__elem--jcfend">

@@ -1,10 +1,9 @@
 import form from "./form.module.scss";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../store/authReducer";
+import { login, reset } from "../../store/apiReducer";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { reset } from "../../store/authReducer";
 import Link from 'next/link'
 
 export default function Login() {
@@ -15,7 +14,7 @@ export default function Login() {
   } = useForm({
     mode: "onChange",
   });
-  const { success, msg, error, isPending, url } = useSelector((state) => state.auth);
+  const { success, msg, error, isPending, url } = useSelector((state) => state.api);
   const dispatch = useDispatch();
   const router = useRouter();
 
