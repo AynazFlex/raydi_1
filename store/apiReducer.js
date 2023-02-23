@@ -1,35 +1,62 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API from "../api/api";
 
-const thunkFun = (fun) => async (data, thunkAPI) => {
+const post = (fun) => async (data, thunkAPI) => {
   try {
-    const result = await fun(data);
-    return result;
+    return await fun(data);
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message);
   }
 };
 
+const get = (fun) => async(_, thunkAPI) => {
+  try {
+    return await fun();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
+}
+
 export const registration = createAsyncThunk(
   "auth/registration",
-  thunkFun(API.registration)
+  post(API.registration)
 );
 
-export const login = createAsyncThunk("auth/login", thunkFun(API.login));
+export const login = createAsyncThunk("auth/login", post(API.login));
 
 export const recovery = createAsyncThunk(
   "auth/recovery",
-  thunkFun(API.recovery)
+  post(API.recovery)
 );
 
 export const resetPassword = createAsyncThunk(
   "auth/password-reset",
-  thunkFun(API.reset)
+  post(API.reset)
 );
 
 export const updatePassword = createAsyncThunk(
   "settings/update",
-  thunkFun(API.update)
+  post(API.update)
+);
+
+export const createOrders = createAsyncThunk(
+  "orders/create",
+  post(API.ordersCreate)
+);
+
+export const checkoutOrders = createAsyncThunk(
+  "orders/checkout",
+  post(API.ordersCheckout)
+);
+
+export const getOrdersHistory = createAsyncThunk(
+  "orders/history",
+  get(API.ordersHistory)
+);
+
+export const balanceTopUp = createAsyncThunk(
+  "balance/top-up",
+  post(API.balanceTopUp)
 )
 
 const initialState = {
@@ -39,14 +66,26 @@ const initialState = {
   msg: "",
   isPending: false,
   success: false,
+  order: {
+    id: "",
+    icon: "",
+    plan: "",
+    price: "",
+    type: "",
+    url: "",
+  },
+  orders: []
 };
 
 const fulfilled = (state, { payload }) => {
-  state.url = payload.url;
-  state.error = "";
-  state.msg = payload.msg;
+  state.msg = payload.msg || '';
   state.isPending = false;
   state.success = payload.success;
+};
+
+const fulfilledAuth = (state, { payload }) => {
+  fulfilled(state, { payload });
+  state.url = payload.url;
 };
 
 const pending = (state) => {
@@ -58,7 +97,7 @@ const pending = (state) => {
 };
 
 const rejected = (state, { payload }) => {
-  state.error = payload;
+  state.error = payload.msg || payload;
   state.isPending = false;
 };
 
@@ -76,60 +115,69 @@ const apiReducer = createSlice({
   },
   extraReducers: {
     //registration
-    [registration.fulfilled.type]: fulfilled,
+    [registration.fulfilled.type]: fulfilledAuth,
     [registration.pending.type]: pending,
     [registration.rejected.type]: rejected,
     //login
-    [login.fulfilled.type]: fulfilled,
+    [login.fulfilled.type]: fulfilledAuth,
     [login.pending.type]: pending,
     [login.rejected.type]: rejected,
     //recovery
     [recovery.fulfilled.type]: (state, { payload }) => {
+      fulfilled(state, { payload });
       state.sign = payload.sign;
-      state.error = "";
-      state.msg = payload.msg;
-      state.isPending = false;
-      state.success = payload.success;
     },
     [recovery.pending.type]: (state) => {
-      state.error = "";
-      state.isPending = true;
-      state.success = false;
-      state.msg = "";
-    },
-    [recovery.rejected.type]: (state, { payload }) => {
-      state.error = payload;
-      state.isPending = false;
+      pending(state);
       state.sign = "";
     },
+    [recovery.rejected.type]: rejected,
     //reset-password
-    [resetPassword.fulfilled.type]: (state, { payload }) => {
-      state.error = "";
-      state.msg = payload.msg;
-      state.isPending = false;
-      state.success = payload.success;
-    },
-    [resetPassword.pending.type]: (state) => {
-      state.error = "";
-      state.isPending = true;
-      state.success = false;
-      state.msg = "";
-    },
+    [resetPassword.fulfilled.type]: fulfilled,
+    [resetPassword.pending.type]: pending,
     [resetPassword.rejected.type]: rejected,
     //update-password
-    [updatePassword.fulfilled.type]: (state, { payload }) => {
-      state.error = "";
-      state.msg = payload.msg;
-      state.isPending = false;
-      state.success = payload.success;
-    },
-    [updatePassword.pending.type]: (state) => {
-      state.error = "";
-      state.isPending = true;
-      state.success = false;
-      state.msg = "";
-    },
+    [updatePassword.fulfilled.type]: fulfilled,
+    [updatePassword.pending.type]: pending,
     [updatePassword.rejected.type]: rejected,
+    //create orders
+    [createOrders.fulfilled.type]: (state, { payload }) => {
+      fulfilled(state, { payload });
+      state.order = payload.order
+    },
+    [createOrders.pending.type]: (state) => {
+      pending(state);
+      state.order = initialState.order
+    },
+    [createOrders.rejected.type]: (state, { payload }) => {
+      rejected(state, { payload });
+      state.order = payload.order
+    },
+    //checkout orders
+    [checkoutOrders.fulfilled.type]: (state, { payload }) => {
+      fulfilled(state, { payload });
+      state.url = payload.url;
+    },
+    [checkoutOrders.pending.type]: pending,
+    [checkoutOrders.rejected.type]: rejected,
+    //orders history
+    [getOrdersHistory.fulfilled.type]: (state, { payload }) => {
+      state.orders.concat(payload.orders)
+      state.success = payload.success
+      state.isPending = false
+    },
+    [getOrdersHistory.pending.type]: (state) => {
+      state.isPending = true
+      state.error = ""
+    },
+    [getOrdersHistory.rejected.type]: rejected,
+    //balance top-up
+    [balanceTopUp.fulfilled.type]: (state, { payload }) => {
+      fulfilled(state, { payload });
+      state.url = payload.url;
+    },
+    [balanceTopUp.pending.type]: pending,
+    [balanceTopUp.rejected.type]: rejected,
   },
 });
 
